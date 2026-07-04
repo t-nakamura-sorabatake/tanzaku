@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>宙畑 七夕リクエスト短冊 | みんなの「読みたい」「やりたい」を笹に飾ろう</title>
+<title>宙畑 七夕リクエスト短冊 | みんなの「読みたい」を笹に飾ろう</title>
 <meta name="description" content="七夕の日に合わせて、宙畑にやってほしい企画・イベント・記事のリクエストを短冊に書いて笹に飾ろう。">
 <style>
   /* ===== 宙畑デザイントークン ===== */
@@ -430,13 +430,31 @@
    セットアップ手順は同梱の README.md を参照
 ===================================================== */
 const SORA_CONFIG = {
-  SUPABASE_URL: "https://jigdxqlqqcrbymoxqclo.supabase.co",   // ← Project URL
-  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ2R4cWxxcWNyYnltb3hxY2xvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNjUzNjksImV4cCI6MjA5ODc0MTM2OX0.lb8wguINAIeb6XLDWPb5ElJtNUMoSyoDH8zl_DkQHK4",          // ← anon public キー
+  SUPABASE_URL: "",   // 例 "https://jigdxqlqqcrbymoxqclo.supabase.co"
+  SUPABASE_ANON_KEY: "sb_publishable_abA59VY_xdzXiAAPImLDfA_-kuVVJQH",
   TABLE: "tanzaku"
 };
 
 /* ===== ストレージ層 ===== */
+SORA_CONFIG.SUPABASE_URL = (SORA_CONFIG.SUPABASE_URL || "").trim().replace(/\/+$/,"");
+SORA_CONFIG.SUPABASE_ANON_KEY = (SORA_CONFIG.SUPABASE_ANON_KEY || "").trim();
 const useSupabase = !!(SORA_CONFIG.SUPABASE_URL && SORA_CONFIG.SUPABASE_ANON_KEY);
+
+/* 新形式キー(sb_publishable_...)はapikeyヘッダのみ、
+   旧形式JWT(eyJ...)はAuthorizationヘッダも付ける */
+function sbHeaders(extra){
+  const h = Object.assign({apikey: SORA_CONFIG.SUPABASE_ANON_KEY}, extra || {});
+  if(SORA_CONFIG.SUPABASE_ANON_KEY.startsWith("eyJ")){
+    h.Authorization = "Bearer " + SORA_CONFIG.SUPABASE_ANON_KEY;
+  }
+  return h;
+}
+
+function supabaseErrorHint(status){
+  if(status===404) return "テーブル「"+SORA_CONFIG.TABLE+"」が見つかりません。SupabaseのSQL EditorでREADMEのテーブル作成SQLを実行したか、TABLE名が一致しているか確認してください。";
+  if(status===401||status===403) return "キーまたは権限(RLSポリシー)に問題があります。anon publicキーを使っているか、select/insertポリシーを作成したか確認してください。";
+  return "";
+}
 const LS_KEY = "sorabatake_tanzaku_v1";
 
 /* localStorageが使えない環境（プライベートモード等）ではメモリ保存にフォールバック */
@@ -462,9 +480,9 @@ async function fetchTanzaku(){
   if(useSupabase){
     const res = await fetch(
       `${SORA_CONFIG.SUPABASE_URL}/rest/v1/${SORA_CONFIG.TABLE}?select=*&order=created_at.desc&limit=500`,
-      {headers:{apikey:SORA_CONFIG.SUPABASE_ANON_KEY, Authorization:`Bearer ${SORA_CONFIG.SUPABASE_ANON_KEY}`}}
+      {headers: sbHeaders()}
     );
-    if(!res.ok) throw new Error("Supabaseからの取得に失敗しました ("+res.status+")");
+    if(!res.ok) throw new Error("Supabaseからの取得に失敗しました ("+res.status+") "+supabaseErrorHint(res.status));
     return await res.json();
   }else{
     let data = [];
@@ -483,16 +501,11 @@ async function insertTanzaku(item){
       `${SORA_CONFIG.SUPABASE_URL}/rest/v1/${SORA_CONFIG.TABLE}`,
       {
         method:"POST",
-        headers:{
-          apikey:SORA_CONFIG.SUPABASE_ANON_KEY,
-          Authorization:`Bearer ${SORA_CONFIG.SUPABASE_ANON_KEY}`,
-          "Content-Type":"application/json",
-          Prefer:"return=representation"
-        },
+        headers: sbHeaders({"Content-Type":"application/json", Prefer:"return=representation"}),
         body:JSON.stringify(item)
       }
     );
-    if(!res.ok) throw new Error("投稿に失敗しました ("+res.status+")");
+    if(!res.ok) throw new Error("投稿に失敗しました ("+res.status+") "+supabaseErrorHint(res.status));
     return (await res.json())[0];
   }else{
     let data = [];
