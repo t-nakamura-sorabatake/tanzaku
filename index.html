@@ -306,7 +306,7 @@
     あなたの願いごとを短冊に書いて、宙畑の笹に飾ってください。<br>
     みんなのリクエストは短冊として編集部に届き、<br>
     今後の宙畑づくりの参考にさせていただきます。<br>
-    ※一度投稿した内容は削除が難しいためご留意ください。<br>
+    ※一度投稿いただいた内容は削除が難しいためご留意ください。<br>
     （2026年7月31日までサイト公開予定）
   </p>
   <button class="cta-btn" id="openFormBtn">🎋 短冊にリクエストを書く</button>
@@ -467,14 +467,8 @@ function setUnlocked(){
   memUnlocked = true;
   try{ localStorage.setItem(UNLOCK_KEY,"1"); }catch(e){}
 }
-const SEED = [
-  {title:"SAR解析の入門連載を最初から丁寧に！", detail:"SARのキホン記事の続編として、実際にPythonで解析するまでをステップバイステップで学べる連載がほしいです。無料データでできる範囲だと嬉しい。", target:"衛星データ解析をこれから始める人", penname:"おりひめ", age:"20代", industry:"IT・通信", created_at:"2026-07-01T09:00:00Z"},
-  {title:"子ども向け衛星データ自由研究イベント", detail:"夏休みに親子で参加できる、衛星画像を使った自由研究ワークショップを開催してほしいです。Tellusを子どもと一緒に触ってみたい。", target:"小中学生とその保護者", penname:"ひこぼし", age:"40代", industry:"教育・研究", created_at:"2026-07-01T12:30:00Z"},
-  {title:"漁業×衛星データの最前線ルポ", detail:"海面水温やクロロフィル濃度データが実際の漁にどう使われているのか、漁師さんの生の声を聞くルポ記事が読みたいです。", target:"一次産業でのデータ活用に興味がある人", penname:"うみねこ", age:"30代", industry:"農林水産", created_at:"2026-07-02T08:15:00Z"},
-  {title:"宇宙ビジネス転職のリアル年収特集", detail:"Why Space連載が大好きです。転職者の年収変化やワークライフバランスなど、踏み込んだ「リアル」をもっと知りたいです。", target:"宇宙業界への転職を考えている社会人", penname:"ベガ", age:"30代", industry:"金融・保険", created_at:"2026-07-02T19:40:00Z"},
-  {title:"衛星データ×防災の自治体事例まとめ", detail:"豪雨や地震のとき、自治体が衛星データをどう使ったのか。導入コストや課題も含めた事例集があると、庁内での説得材料になります。", target:"自治体の防災担当者", penname:"アルタイル", age:"50代", industry:"行政・自治体", created_at:"2026-07-03T10:05:00Z"},
-  {title:"宙畑読者のオフライン交流会がほしい", detail:"読者同士で衛星データ活用のアイデアを話せるミートアップを開催してほしいです。LT大会つきだと最高です。", target:"宙畑読者みんな", penname:"デネブ", age:"20代", industry:"学生", created_at:"2026-07-03T21:20:00Z"}
-];
+/* デモ用サンプルはSupabaseテーブル側に登録済み（README参照）。デモモードは空から開始 */
+const SEED = [];
 async function fetchTanzaku(){
   if(useSupabase){
     const res = await fetch(
@@ -682,4 +676,64 @@ document.addEventListener("keydown",e=>{
 function bindCounter(inputId,countId,max){
   const inp = document.getElementById(inputId);
   const c = document.getElementById(countId);
-  in
+  inp.addEventListener("input",()=>{
+    c.textContent = inp.value.length;
+    c.parentElement.classList.toggle("over", inp.value.length>=max);
+  });
+}
+bindCounter("fTitle","cTitle",30);
+bindCounter("fDetail","cDetail",200);
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  formError.classList.remove("show");
+  const title = document.getElementById("fTitle").value.trim();
+  if(!title){
+    formError.textContent = "「リクエストの内容」を入力してください（30文字以内）。";
+    formError.classList.add("show");
+    return;
+  }
+  const item = {
+    title: title.slice(0,30),
+    detail: document.getElementById("fDetail").value.trim().slice(0,200),
+    target: document.getElementById("fTarget").value.trim().slice(0,50),
+    penname: document.getElementById("fPenname").value.trim().slice(0,20),
+    age: document.getElementById("fAge").value,
+    industry: document.getElementById("fIndustry").value
+  };
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "飾っています…";
+  try{
+    await insertTanzaku(item);
+    setUnlocked(); // 投稿したら全文閲覧を解放
+    ALL = await fetchTanzaku();
+    render(ALL);
+    formOverlay.classList.remove("open");
+    form.reset();
+    document.getElementById("cTitle").textContent = "0";
+    document.getElementById("cDetail").textContent = "0";
+    const toast = document.getElementById("toast");
+    toast.textContent = "短冊を飾りました！みんなの願いごとが全文読めるようになりました 🎋✨";
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"),3200);
+    document.getElementById("scene").scrollIntoView({behavior:"smooth"});
+  }catch(err){
+    formError.textContent = "送信エラー："+err.message;
+    formError.classList.add("show");
+  }finally{
+    btn.disabled = false; btn.textContent = "笹に飾る 🎋";
+  }
+});
+/* ===== 初期化 ===== */
+(async function init(){
+  const banner = document.getElementById("demoBanner");
+  if(!useSupabase && banner) banner.hidden = false;
+  try{
+    ALL = await fetchTanzaku();
+    render(ALL);
+  }catch(err){
+    field.innerHTML = `<div class="empty-msg">短冊の読み込みに失敗しました：${err.message}</div>`;
+  }
+})();
+</script>
+</body>
+</html>
