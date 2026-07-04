@@ -26,7 +26,6 @@
     line-height:1.7;
   }
   button{font-family:inherit;cursor:pointer;}
-
   /* ===== ヘッダー（宙畑風） ===== */
   header.site-header{
     background:#fff;
@@ -47,7 +46,6 @@
   }
   .header-tag{font-size:12px;color:var(--muted);}
   @media(max-width:640px){.header-tag{display:none;}}
-
   /* ===== ヒーロー ===== */
   .hero{
     background:linear-gradient(180deg,#fff 0%,#eaf7fa 100%);
@@ -77,12 +75,10 @@
   .cta-btn:hover{transform:translateY(-2px);background:var(--brand-dark);box-shadow:0 10px 24px rgba(0,166,194,.45);}
   .counter{margin-top:18px;font-size:13px;color:var(--muted);}
   .counter b{color:var(--brand);font-size:18px;margin:0 3px;}
-
   .demo-banner{
     background:var(--accent-yellow);color:#6b5d00;font-size:12.5px;
     text-align:center;padding:8px 16px;
   }
-
   /* ===== 夜空・笹シーン ===== */
   .scene{
     position:relative;
@@ -124,12 +120,10 @@
     color:#eaf7fa;text-shadow:0 0 14px rgba(0,166,194,.6);
   }
   .scene-title p{font-size:12.5px;color:#9fc4d9;letter-spacing:.1em;margin-top:6px;}
-
   .bamboo-layer{
     position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.95;
   }
   .bamboo-layer svg{position:absolute;height:100%;}
-
   /* ===== 短冊 ===== */
   .tanzaku-field{
     position:relative;z-index:3;
@@ -186,16 +180,17 @@
     font-size:10.5px;color:rgba(0,0,0,.55);
     max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
+  .tz-lock{
+    font-size:10px;color:rgba(0,0,0,.45);
+  }
   .tz-c0{background:linear-gradient(165deg,#c8ecf5,#a8dfee);}
   .tz-c1{background:linear-gradient(165deg,#ffe0e7,#ffc7d4);}
   .tz-c2{background:linear-gradient(165deg,#fdf3b3,#fce98c);}
   .tz-c3{background:linear-gradient(165deg,#dcf3d3,#c2e8b5);}
   .tz-c4{background:linear-gradient(165deg,#e9def7,#d7c6f0);}
-
   .empty-msg{
     grid-column:1/-1;color:#9fc4d9;text-align:center;font-size:14px;padding:60px 0;
   }
-
   /* ===== モーダル共通 ===== */
   .overlay{
     position:fixed;inset:0;background:rgba(5,11,31,.72);
@@ -222,7 +217,6 @@
   }
   .modal-close:hover{background:rgba(255,255,255,.35);}
   .modal-body{padding:22px;}
-
   /* 詳細モーダル */
   .detail-title{
     font-size:19px;font-weight:800;color:var(--text);
@@ -236,7 +230,6 @@
     border-radius:4px;text-align:center;font-size:11.5px;padding:2px 0;height:fit-content;margin-top:2px;
   }
   .meta-row .v{color:#444;}
-
   /* フォーム */
   .field{margin-bottom:16px;}
   .field label{
@@ -274,7 +267,6 @@
     border-radius:8px;padding:8px 12px;margin-bottom:12px;
   }
   .form-error.show{display:block;}
-
   /* 完了トースト */
   .toast{
     position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -283,14 +275,12 @@
     opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:200;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
   footer{
     background:#f7f9fa;border-top:1px solid #eee;
     text-align:center;padding:28px 20px;font-size:12px;color:var(--muted);
   }
   footer a{color:var(--brand);text-decoration:none;}
   footer a:hover{text-decoration:underline;}
-
   @media(max-width:520px){
     .tanzaku-field{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:30px 10px;padding:20px 14px 0;}
     .tanzaku{width:98px;height:174px;}
@@ -299,7 +289,6 @@
 </style>
 </head>
 <body>
-
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href="https://sorabatake.jp/" target="_blank" rel="noopener">
@@ -321,26 +310,20 @@
   <button class="cta-btn" id="openFormBtn">🎋 短冊にリクエストを書く</button>
   <div class="counter">現在 <b id="countNum">0</b> 枚の短冊が飾られています</div>
 </section>
-
 <section class="scene" id="scene">
   <div class="milkyway"></div>
   <div class="shooting" style="top:16%;left:72%;"></div>
   <div class="shooting" style="top:34%;left:38%;animation-delay:4.5s;"></div>
-
   <div class="bamboo-layer" id="bambooLayer" aria-hidden="true"></div>
-
   <div class="scene-title">
     <h2>― みんなの願いごと ―</h2>
-    <p>短冊にマウスを重ねてクリックすると、リクエストの詳細が読めます</p>
+    <p id="sceneHint">短冊にマウスを重ねてクリックすると、リクエストの詳細が読めます</p>
   </div>
-
   <div class="tanzaku-field" id="tanzakuField" role="list" aria-label="みんなのリクエスト短冊"></div>
 </section>
-
 <footer>
   宙畑 七夕リクエスト企画 ｜ <a href="https://sorabatake.jp/" target="_blank" rel="noopener">宙畑 Sorabatake</a> ― 新しいビジネスを、宇宙で始めよう。
 </footer>
-
 <!-- 詳細モーダル -->
 <div class="overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="detailHeadTitle">
   <div class="modal">
@@ -361,7 +344,21 @@
     </div>
   </div>
 </div>
-
+<!-- 未投稿ユーザー向け案内モーダル -->
+<div class="overlay" id="lockOverlay" role="dialog" aria-modal="true" aria-labelledby="lockHeadTitle">
+  <div class="modal" style="max-width:430px;">
+    <div class="modal-head">
+      <h3 id="lockHeadTitle">🔒 つづきはあなたの短冊と交換で</h3>
+      <button class="modal-close" data-close aria-label="閉じる">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <p style="font-size:14px;color:#444;margin-bottom:18px;">
+        あなたも短冊を1枚飾ると、<br>みんなの願いごとの<b>全文と詳細</b>が読めるようになります 🎋
+      </p>
+      <button class="btn-primary" id="lockToFormBtn">短冊にリクエストを書く</button>
+    </div>
+  </div>
+</div>
 <!-- 投稿フォームモーダル -->
 <div class="overlay" id="formOverlay" role="dialog" aria-modal="true" aria-labelledby="formHeadTitle">
   <div class="modal">
@@ -370,7 +367,7 @@
       <button class="modal-close" data-close aria-label="閉じる">✕</button>
     </div>
     <div class="modal-body">
-      <p class="form-note">※ 短冊は全員に公開されます。個人情報は書かないでください。</p>
+      <p class="form-note">※ 短冊は全員に公開されます。個人情報は書かないでください。<br>※ 短冊を1枚飾ると、みんなの短冊の全文が読めるようになります。</p>
       <div class="form-error" id="formError"></div>
       <form id="tanzakuForm" novalidate>
         <div class="field">
@@ -416,9 +413,7 @@
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast">短冊を笹に飾りました 🎋✨</div>
-
 <script>
 /* =====================================================
    設定：Supabase を使う場合はここに URL と anon キーを設定
@@ -426,16 +421,14 @@
    セットアップ手順は同梱の README.md を参照
 ===================================================== */
 const SORA_CONFIG = {
-  SUPABASE_URL: "",   // 例 "https://jigdxqlqqcrbymoxqclo.supabase.co"
+  SUPABASE_URL: "https://jigdxqlqqcrbymoxqclo.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_abA59VY_xdzXiAAPImLDfA_-kuVVJQH",
   TABLE: "tanzaku"
 };
-
 /* ===== ストレージ層 ===== */
 SORA_CONFIG.SUPABASE_URL = (SORA_CONFIG.SUPABASE_URL || "").trim().replace(/\/+$/,"");
 SORA_CONFIG.SUPABASE_ANON_KEY = (SORA_CONFIG.SUPABASE_ANON_KEY || "").trim();
 const useSupabase = !!(SORA_CONFIG.SUPABASE_URL && SORA_CONFIG.SUPABASE_ANON_KEY);
-
 /* 新形式キー(sb_publishable_...)はapikeyヘッダのみ、
    旧形式JWT(eyJ...)はAuthorizationヘッダも付ける */
 function sbHeaders(extra){
@@ -445,14 +438,12 @@ function sbHeaders(extra){
   }
   return h;
 }
-
 function supabaseErrorHint(status){
   if(status===404) return "テーブル「"+SORA_CONFIG.TABLE+"」が見つかりません。SupabaseのSQL EditorでREADMEのテーブル作成SQLを実行したか、TABLE名が一致しているか確認してください。";
   if(status===401||status===403) return "キーまたは権限(RLSポリシー)に問題があります。anon publicキーを使っているか、select/insertポリシーを作成したか確認してください。";
   return "";
 }
 const LS_KEY = "sorabatake_tanzaku_v1";
-
 /* localStorageが使えない環境（プライベートモード等）ではメモリ保存にフォールバック */
 let memStore = null;
 function lsGet(){
@@ -462,7 +453,18 @@ function lsSet(v){
   try{ localStorage.setItem(LS_KEY, v); }catch(e){}
   memStore = v;
 }
-
+/* ===== 閲覧ロック（投稿すると全文解放） ===== */
+const UNLOCK_KEY = "sorabatake_tanzaku_unlocked_v1";
+const LOCK_PREVIEW_CHARS = 10; // 未投稿時に見せる文字数
+let memUnlocked = false;
+function isUnlocked(){
+  try{ if(localStorage.getItem(UNLOCK_KEY)==="1") return true; }catch(e){}
+  return memUnlocked;
+}
+function setUnlocked(){
+  memUnlocked = true;
+  try{ localStorage.setItem(UNLOCK_KEY,"1"); }catch(e){}
+}
 const SEED = [
   {title:"SAR解析の入門連載を最初から丁寧に！", detail:"SARのキホン記事の続編として、実際にPythonで解析するまでをステップバイステップで学べる連載がほしいです。無料データでできる範囲だと嬉しい。", target:"衛星データ解析をこれから始める人", penname:"おりひめ", age:"20代", industry:"IT・通信", created_at:"2026-07-01T09:00:00Z"},
   {title:"子ども向け衛星データ自由研究イベント", detail:"夏休みに親子で参加できる、衛星画像を使った自由研究ワークショップを開催してほしいです。Tellusを子どもと一緒に触ってみたい。", target:"小中学生とその保護者", penname:"ひこぼし", age:"40代", industry:"教育・研究", created_at:"2026-07-01T12:30:00Z"},
@@ -471,7 +473,6 @@ const SEED = [
   {title:"衛星データ×防災の自治体事例まとめ", detail:"豪雨や地震のとき、自治体が衛星データをどう使ったのか。導入コストや課題も含めた事例集があると、庁内での説得材料になります。", target:"自治体の防災担当者", penname:"アルタイル", age:"50代", industry:"行政・自治体", created_at:"2026-07-03T10:05:00Z"},
   {title:"宙畑読者のオフライン交流会がほしい", detail:"読者同士で衛星データ活用のアイデアを話せるミートアップを開催してほしいです。LT大会つきだと最高です。", target:"宙畑読者みんな", penname:"デネブ", age:"20代", industry:"学生", created_at:"2026-07-03T21:20:00Z"}
 ];
-
 async function fetchTanzaku(){
   if(useSupabase){
     const res = await fetch(
@@ -490,7 +491,6 @@ async function fetchTanzaku(){
     return data.slice().sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
   }
 }
-
 async function insertTanzaku(item){
   if(useSupabase){
     const res = await fetch(
@@ -513,7 +513,6 @@ async function insertTanzaku(item){
     return item;
   }
 }
-
 /* ===== 夜空の星 ===== */
 (function makeStars(){
   const scene = document.getElementById("scene");
@@ -532,7 +531,6 @@ async function insertTanzaku(item){
   }
   scene.appendChild(frag);
 })();
-
 /* ===== 笹（SVG） ===== */
 (function makeBamboo(){
   function leafCluster(cx,cy,scale,rot){
@@ -571,12 +569,17 @@ async function insertTanzaku(item){
     `<div style="position:absolute;left:50%;top:-30px;height:100%;width:300px;transform:translateX(-50%);opacity:.55;">${svg2}</div>`+
     `<div style="position:absolute;right:-40px;top:0;height:100%;width:300px;">${svg2}</div>`;
 })();
-
 /* ===== 描画 ===== */
 let ALL = [];
 const field = document.getElementById("tanzakuField");
-
 function render(list){
+  const unlocked = isUnlocked();
+  const hint = document.getElementById("sceneHint");
+  if(hint){
+    hint.textContent = unlocked
+      ? "短冊にマウスを重ねてクリックすると、リクエストの詳細が読めます"
+      : "🔒 いまはチラ見せ中。あなたも短冊を1枚飾ると、全文と詳細が読めるようになります";
+  }
   field.innerHTML = "";
   document.getElementById("countNum").textContent = list.length;
   if(!list.length){
@@ -594,29 +597,35 @@ function render(list){
     wrap.style.setProperty("--dy", (r(2)*26).toFixed(0)+"px");
     wrap.style.setProperty("--sdur",(3.8+r(3)*2.4).toFixed(1)+"s");
     wrap.style.setProperty("--sdelay",(-r(4)*4).toFixed(1)+"s");
-
     const btn = document.createElement("button");
     btn.className = "tanzaku tz-c"+(i%5);
     btn.type = "button";
-    btn.title = "クリックして詳細を見る";
-    btn.setAttribute("aria-label",(item.title||"")+" の詳細を見る");
-
+    btn.title = unlocked ? "クリックして詳細を見る" : "投稿すると全文が読めます";
+    btn.setAttribute("aria-label",(item.title||"")+(unlocked?" の詳細を見る":" （投稿すると全文が読めます）"));
     const t = document.createElement("span");
     t.className = "tz-title";
-    t.textContent = item.title || "";
-
+    const fullTitle = item.title || "";
+    t.textContent = unlocked
+      ? fullTitle
+      : (fullTitle.length > LOCK_PREVIEW_CHARS ? fullTitle.slice(0, LOCK_PREVIEW_CHARS) + "…" : fullTitle);
     const n = document.createElement("span");
-    n.className = "tz-name";
-    n.textContent = item.penname ? item.penname : "匿名";
-
+    if(unlocked){
+      n.className = "tz-name";
+      n.textContent = item.penname ? item.penname : "匿名";
+    }else{
+      n.className = "tz-lock";
+      n.textContent = "🔒 投稿して読む";
+    }
     btn.appendChild(t); btn.appendChild(n);
-    btn.addEventListener("click",()=>openDetail(item));
+    btn.addEventListener("click",()=>{
+      if(isUnlocked()) openDetail(item);
+      else openLockNotice();
+    });
     wrap.appendChild(btn);
     frag.appendChild(wrap);
   });
   field.appendChild(frag);
 }
-
 /* ===== 詳細モーダル ===== */
 const detailOverlay = document.getElementById("detailOverlay");
 function openDetail(item){
@@ -634,90 +643,41 @@ function openDetail(item){
   document.getElementById("dDate").textContent = d;
   detailOverlay.classList.add("open");
 }
-
+/* ===== 未投稿ユーザー向け案内 ===== */
+const lockOverlay = document.getElementById("lockOverlay");
+function openLockNotice(){
+  lockOverlay.classList.add("open");
+}
+document.getElementById("lockToFormBtn").addEventListener("click",()=>{
+  lockOverlay.classList.remove("open");
+  openForm();
+});
 /* ===== フォーム ===== */
 const formOverlay = document.getElementById("formOverlay");
 const form = document.getElementById("tanzakuForm");
 const formError = document.getElementById("formError");
-
-document.getElementById("openFormBtn").addEventListener("click",()=>{
+function openForm(){
   formError.classList.remove("show");
   formOverlay.classList.add("open");
   setTimeout(()=>document.getElementById("fTitle").focus(),100);
-});
-
+}
+document.getElementById("openFormBtn").addEventListener("click",openForm);
 document.querySelectorAll("[data-close]").forEach(el=>{
   el.addEventListener("click",()=>{
     el.closest(".overlay").classList.remove("open");
   });
 });
-[detailOverlay,formOverlay].forEach(ov=>{
+[detailOverlay,formOverlay,lockOverlay].forEach(ov=>{
   ov.addEventListener("click",e=>{ if(e.target===ov) ov.classList.remove("open"); });
 });
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){ detailOverlay.classList.remove("open"); formOverlay.classList.remove("open"); }
+  if(e.key==="Escape"){
+    detailOverlay.classList.remove("open");
+    formOverlay.classList.remove("open");
+    lockOverlay.classList.remove("open");
+  }
 });
-
 function bindCounter(inputId,countId,max){
   const inp = document.getElementById(inputId);
   const c = document.getElementById(countId);
-  inp.addEventListener("input",()=>{
-    c.textContent = inp.value.length;
-    c.parentElement.classList.toggle("over", inp.value.length>=max);
-  });
-}
-bindCounter("fTitle","cTitle",30);
-bindCounter("fDetail","cDetail",200);
-
-form.addEventListener("submit",async e=>{
-  e.preventDefault();
-  formError.classList.remove("show");
-  const title = document.getElementById("fTitle").value.trim();
-  if(!title){
-    formError.textContent = "「リクエストの内容」を入力してください（30文字以内）。";
-    formError.classList.add("show");
-    return;
-  }
-  const item = {
-    title: title.slice(0,30),
-    detail: document.getElementById("fDetail").value.trim().slice(0,200),
-    target: document.getElementById("fTarget").value.trim().slice(0,50),
-    penname: document.getElementById("fPenname").value.trim().slice(0,20),
-    age: document.getElementById("fAge").value,
-    industry: document.getElementById("fIndustry").value
-  };
-  const btn = document.getElementById("submitBtn");
-  btn.disabled = true; btn.textContent = "飾っています…";
-  try{
-    await insertTanzaku(item);
-    ALL = await fetchTanzaku();
-    render(ALL);
-    formOverlay.classList.remove("open");
-    form.reset();
-    document.getElementById("cTitle").textContent = "0";
-    document.getElementById("cDetail").textContent = "0";
-    const toast = document.getElementById("toast");
-    toast.classList.add("show");
-    setTimeout(()=>toast.classList.remove("show"),2600);
-    document.getElementById("scene").scrollIntoView({behavior:"smooth"});
-  }catch(err){
-    formError.textContent = "送信エラー："+err.message;
-    formError.classList.add("show");
-  }finally{
-    btn.disabled = false; btn.textContent = "笹に飾る 🎋";
-  }
-});
-
-/* ===== 初期化 ===== */
-(async function init(){
-  if(!useSupabase) document.getElementById("demoBanner").hidden = false;
-  try{
-    ALL = await fetchTanzaku();
-    render(ALL);
-  }catch(err){
-    field.innerHTML = `<div class="empty-msg">短冊の読み込みに失敗しました：${err.message}</div>`;
-  }
-})();
-</script>
-</body>
-</html>
+  in
